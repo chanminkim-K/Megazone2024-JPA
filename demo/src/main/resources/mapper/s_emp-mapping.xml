@@ -2,8 +2,17 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- DAO(Data Access Object)
+
+	 EmployeeDAO : 사원 정보(Employee)를 접속할 수 있는 객체
+-->
 <mapper namespace="EmployeeDAO">
 
+
+    <!-- type="employee" 는 <typeAlias alias="employee" 임
+        id="employeeResult" 는  namespace="EmployeeDAO" 에서
+        사용할 id 라는 의미.
+    -->
     <resultMap type="employee" id="employeeResult">
         <result property="id" column="ID"/>
         <result property="name" column="NAME"/>
@@ -23,6 +32,7 @@
                #{salary})
     </insert>
 
+    <!-- resultMap="employeeResult" 는  resultMap tag 의 id -->
     <select id="getEmployeeList" resultMap="employeeResult">
         select id, name, start_date, title, dept_name, salary
         from s_emp
