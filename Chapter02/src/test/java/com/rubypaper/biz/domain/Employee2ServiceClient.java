@@ -15,7 +15,7 @@ import java.util.Date;
  *      persist()
  */
 
-class EmployeeServiceClient2 {
+class Employee2ServiceClient {
 
     public static void main(String[] args) {
 
@@ -30,22 +30,22 @@ class EmployeeServiceClient2 {
 
         try {
             // 영속성 관리 엔티티 생성
-            Employee1 employee1 = new Employee1();
+            Employee2 employee = new Employee2();
 
-            employee1.setId(2L);
-            employee1.setName("홍길동");
-            employee1.setMailId("hong@naver.com");
-            employee1.setStartDate(new Date());
-            employee1.setTitle("대리");
-            employee1.setDeptName("개발부");
-            employee1.setSalary(2500.00);
-            employee1.setCommissionPct(12.50);
+            employee.setId(2L);
+            employee.setName("홍길동");
+            employee.setMailId("hong@naver.com");
+            employee.setStartDate(new Date());
+            employee.setTitle("대리");
+            employee.setDeptName("개발부");
+            employee.setSalary(2500.00);
+            employee.setCommissionPct(12.50);
 
             // 트랜잭션 시작
             tx.begin();
 
             // 연속성 관리를 위한 엔티티 묶음
-            em.persist(employee1);
+            em.persist(employee);
 
             // 트랜잭션 종료
             tx.commit();
