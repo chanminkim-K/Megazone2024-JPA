@@ -1,24 +1,35 @@
-package com.rubypaper.biz.domain;
+package com.rubypaper.biz.client;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
-import java.util.Date;
+
+import com.rubypaper.biz.domain.Employee8;
 
 /*
- * JPA 관리한 Entity 생성
- * - Entity 를 이용해서 데이터 삽입하는 테스트
- *   1. EntityManagerFactory 이용해서 EntityManager를 생성
- *   2. EntityManager 를 이용해서 영속성 관리
- *      persist()
+ * 본 테스트 케이스를 실행하면 오류가 발생함.
+ *
+ * 현재 사용중이 H2 최신 버전에 버그가 있음.
+ *
+ * - 오류 해결 방법
+ *   1. h2 1.4.200 버전을 사용하면 오류가 발생하지 않음.
+ *   2. persistence.xml 에서 jdbc url 정보를 수정
+ *      2.1 변경 전
+ *          jdbc:h2:tcp://localhost/./test
+ *      2.2 변경 후
+ *          jdbc:h2:tcp://localhost/./test;MODE=MySQL
+ *   3. strategy 변경
+ *      3.1 변경 전
+ *          GenerationType.IDENTITY
+ *      3.2 변경 후
+ *          GenerationType.SEQUENCE
  */
 
-class Employee3ServiceClient {
+public class Employee8ServiceClient {
 
     public static void main(String[] args) {
-
         // <persistence-unit name="Chapter02"> 의 설정 정보를 참조
         EntityManagerFactory emf =
                 Persistence.createEntityManagerFactory("Chapter02");
@@ -29,34 +40,26 @@ class Employee3ServiceClient {
         EntityTransaction tx = em.getTransaction();
 
         try {
-            // 영속성 관리 엔티티 생성
-            Employee3 employee = new Employee3();
-
-            employee.setId(1L);
+            Employee8 employee = new Employee8();
+            //employee.setId(1L);
             employee.setName("홍길동");
-            employee.setMailId("hong@naver.com");
-            employee.setStartDate(new Date());
-            employee.setTitle("대리");
-            employee.setDeptName("개발부");
-            employee.setSalary(2500.00);
-            employee.setCommissionPct(12.50);
 
             // 트랜잭션 시작
             tx.begin();
-
-            // 연속성 관리를 위한 엔티티 묶음
+            // 영속성 관리를 위한 엔터티 등록
             em.persist(employee);
-
             // 트랜잭션 종료
             tx.commit();
-        } catch (Exception e){
+
+
+
+        } catch (Exception e) {
             e.printStackTrace();
+            tx.rollback();
         } finally {
             em.close();
             emf.close();
         }
-
-
     }
 
 }

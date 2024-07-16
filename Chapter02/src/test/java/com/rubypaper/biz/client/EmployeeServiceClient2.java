@@ -1,5 +1,6 @@
-package com.rubypaper.biz.domain;
+package com.rubypaper.biz.client;
 
+import com.rubypaper.biz.domain.Employee1;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -15,7 +16,7 @@ import java.util.Date;
  *      persist()
  */
 
-class EmployeeServiceClient1 {
+class EmployeeServiceClient2 {
 
     public static void main(String[] args) {
 
@@ -25,11 +26,14 @@ class EmployeeServiceClient1 {
 
         EntityManager em = emf.createEntityManager();
 
+        // 엔터티 트랜잭션 생성
+        EntityTransaction tx = em.getTransaction();
+
         try {
             // 영속성 관리 엔티티 생성
             Employee1 employee1 = new Employee1();
 
-            employee1.setId(1L);
+            employee1.setId(2L);
             employee1.setName("홍길동");
             employee1.setMailId("hong@naver.com");
             employee1.setStartDate(new Date());
@@ -38,8 +42,14 @@ class EmployeeServiceClient1 {
             employee1.setSalary(2500.00);
             employee1.setCommissionPct(12.50);
 
+            // 트랜잭션 시작
+            tx.begin();
+
             // 연속성 관리를 위한 엔티티 묶음
             em.persist(employee1);
+
+            // 트랜잭션 종료
+            tx.commit();
         } catch (Exception e){
             e.printStackTrace();
         } finally {

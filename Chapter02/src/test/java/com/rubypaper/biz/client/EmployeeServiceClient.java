@@ -1,5 +1,6 @@
-package com.rubypaper.biz.domain;
+package com.rubypaper.biz.client;
 
+import com.rubypaper.biz.domain.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
