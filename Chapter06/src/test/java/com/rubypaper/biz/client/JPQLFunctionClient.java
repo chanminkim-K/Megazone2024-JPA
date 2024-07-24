@@ -26,7 +26,8 @@ class JPQLFunctionClient {
     private static void dataSelect(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();
 
-        String jpql = "SELECT ABS(-46), SQRT(9), MOD(20, 6) FROM Employee e";
+        String jpql = "SELECT CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP " +
+                "FROM Department d";
         TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
 
         List<Object[]> resultList = query.getResultList();
