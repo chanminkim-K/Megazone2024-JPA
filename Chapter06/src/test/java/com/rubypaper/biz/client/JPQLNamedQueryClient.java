@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 
-class JPQLFunctionClient {
+class JPQLNamedQueryClient {
 
     public static void main(String[] args) {
         EntityManagerFactory emf =
@@ -15,7 +15,9 @@ class JPQLFunctionClient {
 
         try {
             dataInsert(emf);
-            dataSelect(emf);
+//            dataDelete(emf);
+            dataUpdate(emf);
+//            dataSelect(emf);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -23,18 +25,56 @@ class JPQLFunctionClient {
         }
     }
 
+    private static void dataDelete(EntityManagerFactory emf) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        tx.begin();
+
+        Query query = em.createQuery("DELETE Employee e WHERE e.name=:empName");
+        query.setParameter("empName", "아르바이트");
+        int updateCount = query.executeUpdate();
+        System.out.println(updateCount + "건의 데이터 갱신됨");
+
+        tx.commit();
+        em.close();
+    }
+
+    private static void dataUpdate(EntityManagerFactory emf) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        tx.begin();
+
+        Query query = em.createQuery("UPDATE Employee e " +
+                "SET e.salary=salary * 1.3 " +
+                "WHERE e.id=:empId");
+        query.setParameter("empId", 3L);
+        query.executeUpdate();
+
+        String jpql = "SELECT e FROM Employee e WHERE e.id = 3L";
+        query = em.createQuery(jpql);
+        Employee employee = (Employee) query.getSingleResult();
+        System.out.println(employee.getId() + "번 직원의 수정된 급여 : " +
+                employee.getSalary());
+
+        tx.commit();
+        em.close();
+    }
+
     private static void dataSelect(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();
 
-        String jpql = "SELECT CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP " +
-                "FROM Department d";
-        TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+        Query query = em.createNamedQuery("Employee.searchByDeptId");
+        query.setParameter("deptId", 2L);
+        query.setFirstResult(0);
+        query.setMaxResults(3);
 
         List<Object[]> resultList = query.getResultList();
         for (Object[] result : resultList) {
             System.out.println("---> " + Arrays.toString(result));
         }
-        
+
         em.close();
     }
 

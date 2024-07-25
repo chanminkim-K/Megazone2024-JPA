@@ -14,6 +14,7 @@ import java.util.List;
 public class Department {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "DEPT_ID")
     private Long deptId;
 
     private String name;
