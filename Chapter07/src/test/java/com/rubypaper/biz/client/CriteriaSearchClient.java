@@ -4,10 +4,12 @@ import com.rubypaper.biz.domain.Department;
 import com.rubypaper.biz.domain.Employee;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
+import lombok.val;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,8 +19,16 @@ class CriteriaSearchClient {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("Chapter07");
         
         try {
+            // 사용자가 입력한 검색 조건과 검색 단어를 이용한다.
+            Scanner keyboard = new Scanner(System.in);
+            System.out.println("검색 조건을 입력하세요. : name 혹은 mailid");
+            String searchCondition = keyboard.nextLine();
+            System.out.println("검색어를 입력하세요.");
+            String searchKeyword = keyboard.nextLine();
+
             dataInsert(emf);
-            dataSelect(emf);
+            dataSelect(emf, searchCondition, searchKeyword);
+            keyboard.close();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -26,12 +36,8 @@ class CriteriaSearchClient {
         }
     }
 
-    private static void dataSelect(EntityManagerFactory emf) {
+    private static void dataSelect(EntityManagerFactory emf, String searchCondition, String searchKeyword) {
         EntityManager em = emf.createEntityManager();
-        
-        // 검색 정보 설정
-        String searchCondition = "TITLE";
-        String searchKeyword = "과장";
 
         // 크라이테리어 빌더 생성
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -43,26 +49,24 @@ class CriteriaSearchClient {
         // SELECT emp
         criteriaQuery.select(emp);
 
-        // JOIN FETCH emp.dept dept
-        emp.fetch("dept", JoinType.LEFT);
+        emp.fetch("dept");
 
-        // WHERE (emp.mailId like 'Viru%'
-        //        OR emp.salary >= 50000.00)
-        //        AND emp.dept.name = '영업부)
-        Predicate[] condition1 = {builder.like(emp.<String>get("mailId"), "Viru%"),
-                                builder.ge(emp.<Double>get("salary"), 50000.00)};
-        Predicate condition2 = builder.equal(emp.get("dept").get("name"), "영업부");
-
-        Predicate predicate = builder.and(builder.or(condition1), condition2);
-        criteriaQuery.where(predicate);
-
+        if(searchCondition.equals("mailid")) {
+            // WHERE emp.mailId like %searchKeyword%
+            criteriaQuery.where(builder.like(emp.<String>get("mailId"),
+                    "%" + searchKeyword + "%"));
+        } else if(searchCondition.equals("name")) {
+            // WHERE emp.name like %searchKeyword%
+            criteriaQuery.where(builder.like(emp.<String>get("name"),
+                    "%" + searchKeyword + "%"));
+        }
 
         TypedQuery<Employee> query = em.createQuery(criteriaQuery);
         List<Employee> resultList = query.getResultList();
         for (Employee result : resultList) {
             System.out.println("---> " + result.toString());
         }
-
+        
         em.close();
     }
 
