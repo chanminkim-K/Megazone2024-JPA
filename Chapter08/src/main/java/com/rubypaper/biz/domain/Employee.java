@@ -2,10 +2,12 @@ package com.rubypaper.biz.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Data
+@ToString(exclude = "dept")
 @Entity
 @Table(name = "S_EMP")
 public class Employee {
@@ -18,20 +20,8 @@ public class Employee {
     @Column(name = "MAIL_ID")
     private String mailId;
 
-    @Column(name = "STRAT_DATE")
-    private Date startDate;
-
-    private String title;
-
-    // Department 객체와 관계를 맺으면서 사용하지 않음
-//    @Column(name = "DEPT_NAME")
-//    private String deptName;
-
     private Double salary;
 
-
-    @Column(name = "COMMISSION_PCT")
-    private Double commissionPct;
 
     @ManyToOne
     @JoinColumn(name = "DEPT_ID")
