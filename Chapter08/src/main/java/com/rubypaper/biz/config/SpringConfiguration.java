@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManagerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -13,14 +14,35 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.HashMap;
 
-// 현재 클래스가 스프링 설정 클래스임을 컨테이너에 알려줌
+// 현재 클래스가 스프링 설정 클래스임을 컨테이너에게 알려줌.
 @Configuration
-//
+// 스프링 컨테이너가 생성할 객체의 클래스를 탐색하기 위한 기준 위치 정보
 @ComponentScan(basePackages = "com.rubypaper.biz")
+/*
+ * business-layer.xml 의 트랜잭션 설정 대신에 스프링 설정 클래스에서
+ * @EnableTransactionManagement 어노테이션을 통해서
+ * @Transactional 을 활성화. => 어노테이션 기반의 트랜잭션 관리가 가능해짐.
+ *
+ * 비즈니스 클래스에 @Transactional 어노테이션을 정의하면,
+ * 비즈니스 메소드에 대한 트랜잭션 관리를 알아서 해줌.
+ */
 @EnableTransactionManagement
 
+/*
+ * 지정한 패키지 경로에서
+ * Spring Data 의 Interface 를 상속받아 구현한 Interface 를 인식해서
+ * 객제로 생성해 줌.
+ */
+@EnableJpaRepositories(basePackages = "com.rubypaper.biz.repository",
+                    entityManagerFactoryRef = "factoryBean",
+                    transactionManagerRef = "txManager")
 public class SpringConfiguration {
 
+    /*
+     * business-layer.xml 의 <bean> 설정과 동일함.
+     * 스프링 컨테이너는 @Bean 이 설정된 메소드를 호출한 후
+     * 반환된 객체를 스프링 컨테이너에서 관리함.
+     */
     @Bean
     public HibernateJpaVendorAdapter vendorAdapter() {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
@@ -37,7 +59,7 @@ public class SpringConfiguration {
         return dataSource;
     }
 
-    @Bean
+    @Bean//(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean factoryBean() {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setJpaVendorAdapter(vendorAdapter());
@@ -54,7 +76,7 @@ public class SpringConfiguration {
         return factoryBean;
     }
 
-    @Bean
+    @Bean//(name = "transactionManager")
     public JpaTransactionManager txManager(EntityManagerFactory factory) {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(factory);

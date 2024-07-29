@@ -2,7 +2,7 @@ package com.rubypaper.biz.service;
 
 
 import com.rubypaper.biz.domain.Department;
-import com.rubypaper.biz.persistence.DepartmentRepository;
+import com.rubypaper.biz.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,10 @@ public class DepartmentService {
 
     @Transactional
     public void insertDepartment(Department department) {
-        deptRepository.insertDepartment(department);
+        deptRepository.save(department);
     }
 
     public Department getDepartment(Department department) {
-        return deptRepository.getDepartment(department);
+        return deptRepository.findById(department.getDeptId()).get();
     }
 }
