@@ -37,12 +37,9 @@ public class EmployeeService {
         return empRepository.findById(employee.getId()).get();
     }
 
-    public Page<Employee> getEmployeeList(Employee employee, int pageNumber) {
-        PageRequest paging =
-                PageRequest.of(pageNumber - 1, 3,
-                        by(new Order(Direction.DESC, "mailId"),
-                                new Order(Direction.ASC, "salary")));
-        return empRepository.findByNameContaining(employee.getName(), paging);
+    public List<Object[]> getEmployeeList(Employee employee) {
+        PageRequest paging = PageRequest.of(0, 3, Direction.DESC, "id");
+        return empRepository.findByJPQL(employee.getName(), paging);
     }
 
 }
