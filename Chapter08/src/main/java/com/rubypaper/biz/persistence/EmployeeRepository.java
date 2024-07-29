@@ -33,10 +33,24 @@ public class EmployeeRepository {
         return (Employee)  em.find(Employee.class, employee.getId());
     }
 
-    public List<Employee> getEmployeeList(Employee employee) {
+    public List<Employee> getEmployeeList() {
         System.out.println("===> JPA로 getEmployeeList() 기능 처리");
-        return em.createQuery("FROM Employee emp JOIN FETCH emp.dept dept " +
-                                 "ORDER BY emp.id DESC").getResultList();
+
+        /**
+         * 1. Join 이 동작하지 않는 경우
+         */
+        String jqpl1 = "SELECT e FROM Employee e";
+
+        /**
+         * 2. Join 이 동작하는 경우.
+         *    - 묵시적 : select 절에 직원 객체 및 연관 관계의 부서 객체까지 포ㅓ함되도록 작성.
+         *    - 명시적 : JOIN FETCH 를 명시적으로 작성.
+         *              inner join, outer join 등
+         */
+        String jqpl2 = "FROM Employee emp JOIN FETCH emp.dept dept " +
+                "ORDER BY emp.id DESC";
+
+        return em.createQuery(jqpl2).getResultList();
     }
 
 }

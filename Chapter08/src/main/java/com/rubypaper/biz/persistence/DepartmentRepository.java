@@ -20,7 +20,6 @@ public class DepartmentRepository {
         em.persist(department);
     }
 
-
     public Department getDepartment(Department department) {
         System.out.println("===> JPA로 getDepartment() 기능 처리");
         return em.find(Department.class, department.getDeptId());

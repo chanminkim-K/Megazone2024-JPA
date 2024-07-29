@@ -17,6 +17,11 @@ public class Employee {
 
     private String name;
 
+    /**
+     * @OneToMany
+     * - fetch 의 기본 속성값 : LAZY
+     */
+
     @Column(name = "MAIL_ID")
     private String mailId;
 
